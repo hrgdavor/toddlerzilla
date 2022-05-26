@@ -107,13 +107,21 @@ document.body.addEventListener('wheel',evt=>{
 	makeLetter('&nbsp;', evt.clientX, evt.clientY)
 	evt.preventDefault()
 })
+document.body.addEventListener('contextmenu',evt=>{
+	makeLetter('&nbsp;', evt.clientX, evt.clientY)
+	evt.preventDefault()
+})
+
 var pdown = false
 document.body.addEventListener('pointerdown',evt=>{
+	makeLetter('&nbsp;', evt.clientX, evt.clientY)
 	pdown = true
+	evt.preventDefault()
 })
 
 document.body.addEventListener('pointerup',evt=>{
 	pdown = false
+	evt.preventDefault()
 })
 
 document.body.addEventListener('pointermove',evt=>{
