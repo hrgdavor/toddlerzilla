@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title>Toddler fun</title>
+  <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+  <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">  
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="/images/logo-mobile.png">
+  <meta name="apple-mobile-web-app-title" content="KOBASA">
+
+<style>
+body,html{
+	margin:0; 
+	padding:0;
+	width:100%;
+	height:100%
+}
+
+body{
+	overflow:hidden; touch-action: none;
+}
+
+.key{
+	color:white;
+	font-family: Verdana;
+	font-weight: bold;
+	padding: 20px 40px;
+	display: inline-block;
+	border-radius: 40px;
+}
+
+</style>
+
+ </head>
+
+ <body>
+  
+ </body>
+</html>
+
+<script>
+const translations = { ' ':'SPACE' }
+const colors = [
+	'red',
+	'green',
+	'blue',
+	'orange',
+	'black'
+]
+var audioCtx = new (window.AudioContext || window.webkitAudioContext);
+var playing = false
+function playSound(freq=440){
+	playing = true
+	var o = audioCtx.createOscillator()
+	o.frequency.value = freq
+	var  g = audioCtx.createGain()
+	o.connect(g)
+	o.type = "square";
+	g.connect(audioCtx.destination)
+	o.start(0)
+	setTimeout(()=>{
+		g.gain.exponentialRampToValueAtTime( 0.00001, audioCtx.currentTime + 0.04)
+		playing = false
+		setTimeout(()=>{
+			o.stop()
+		},100)
+	},80)
+}
+function makeLetter(key, left=-1, top=-1, time = 2000){
+	const elem = document.createElement('DIV')
+	elem.innerHTML = key
+	elem.className = 'key'
+	document.body.appendChild(elem)
+	const style = elem.style
+	style.position = 'absolute'
+	style.fontSize = (Math.round(Math.random()*128)+64)+'px'
+	const maxx = document.body.clientWidth
+	const maxy = document.body.clientHeight
+	if(left == -1) left = maxx/2
+	if(top == -1) top = maxy/2
+	style.left =  (left - elem.offsetWidth /2) + 'px' 
+	style.top = (top - elem.offsetHeight / 2) + 'px'
+	style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]
+	if(!playing)playSound(Math.random()*300+1640)
+	setTimeout(() => {
+		style.transition = 'all '+(time/2)+'ms'
+		style.left = (Math.random() * maxx) + 'px' 
+		style.top = (Math.random() * maxy) + 'px'
+		setTimeout(() => {
+			style.opacity = '0'
+		}, time/2);
+	}, 80);
+	setTimeout(() => {
+		document.body.removeChild(elem)
+	}, time);
+}
+
+document.body.addEventListener('keydown',evt=>{
+	const key = (translations[evt.key] || evt.key).toUpperCase()
+	makeLetter(key)
+	evt.preventDefault()
+})
+document.body.addEventListener('wheel',evt=>{
+	makeLetter('&nbsp;', evt.clientX, evt.clientY)
+	evt.preventDefault()
+})
+var pdown = false
+document.body.addEventListener('pointerdown',evt=>{
+	pdown = true
+})
+
+document.body.addEventListener('pointerup',evt=>{
+	pdown = false
+})
+
+document.body.addEventListener('pointermove',evt=>{
+	if(pdown) makeLetter('&nbsp;', evt.clientX, evt.clientY)
+})
+
+
+</script>
