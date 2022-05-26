@@ -24,11 +24,34 @@ body{
 	font-family: verdana;
 	font-site: 20px;
 }
+.game-link{
+	display: flex;
+	flex-direction: column;
+}
+.game-img-link{
+	display: inline-block;
+	float:left;
+}
+.game-img-link{
+margin-right: 30px;
+}
 </style>
 
  </head>
 
- <body>
-  <a href="letters.html">GAME 1 - smahing letters</a>
+<body>
+	<div class="game-link">
+		<a href="letters.html" class="game-title">smahing letters</a>
+		<div class="game-desc">
+		<a href="letters.html" class="game-img-link"><img src="images/smash.png" width="160" height="160" align="left"/></a>
+		<ul>
+		<li>pressing any key display key in the middle
+		<li>mouse clicks generate empty box at mouse location
+		<li>scroll wheel generates emtpy boxes at mouse location
+		<li>every spawned box moves to random location after creation and fades away
+		</ul>
+		</div>
+	</div>
+
  </body>
 </html>
