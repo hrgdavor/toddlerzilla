@@ -2,15 +2,14 @@
 <html>
  <head>
   <title>Toddler fun</title>
-  <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-  <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">  
+  <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE"/>
+  <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE"/>  
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="apple-touch-icon" href="/images/logo-mobile.png">
-  <meta name="apple-mobile-web-app-title" content="KOBASA">
-
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <link rel="apple-touch-icon" href="/images/logo-mobile.png"/>
+  <meta name="apple-mobile-web-app-title" content="KOBASA"/>
 <style>
 body,html{
 	margin:0; 
@@ -50,6 +49,7 @@ const colors = [
 	'orange',
 	'black'
 ]
+const rndColor = ()=>Math.floor(Math.random()*colors.length)
 var audioCtx = new (window.AudioContext || window.webkitAudioContext);
 var playing = false
 function playSound(freq=440){
@@ -69,37 +69,55 @@ function playSound(freq=440){
 		},100)
 	},80)
 }
-function makeLetter(key, left=-1, top=-1, time = 2000){
+
+function makeLetter(key, color=-1, move=true, left=-1, top=-1, time = 2000, fade = 1000){
+	if(color === -1) color = rndColor()
 	const elem = document.createElement('DIV')
+	if(key === 'SPACE') key = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '
 	elem.innerHTML = key
 	elem.className = 'key'
-	document.body.appendChild(elem)
+
 	const style = elem.style
 	style.position = 'absolute'
 	style.fontSize = (Math.round(Math.random()*128)+64)+'px'
-	const maxx = document.body.clientWidth
-	const maxy = document.body.clientHeight
-	if(left == -1) left = maxx/2
-	if(top == -1) top = maxy/2
-	style.left =  (left - elem.offsetWidth /2) + 'px' 
-	style.top = (top - elem.offsetHeight / 2) + 'px'
-	style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]
-	if(!playing)playSound(Math.random()*300+1640)
+	style.top = '0px';
+	style.left = '0px';
+
+	document.body.appendChild(elem) 
+	
+	const offsetHeight = elem.offsetHeight
+	const offsetWidth = elem.offsetWidth
+	const maxx = document.body.clientWidth - offsetWidth
+	const maxy = document.body.clientHeight - offsetHeight
+	if(left == -1) left = (maxx + offsetWidth)/2
+	if(top == -1) top = (maxy + offsetHeight)/2
+
+	style.transform = `translate(${left - offsetWidth/2}px, ${top -offsetHeight/ 2}px)`
+
+	style.backgroundColor = colors[color]
+	
+	if(!playing) playSound(Math.random()*300+1640)
+	
+	const movex = Math.random() * maxx
+	const movey = Math.random() * maxy
+
 	setTimeout(() => {
-		style.transition = 'all '+(time/2)+'ms'
-		style.left = (Math.random() * maxx) + 'px' 
-		style.top = (Math.random() * maxy) + 'px'
+		style.transition = 'all '+(fade)+'ms'
+		if(move){
+			style.transform = `translate(${movex}px, ${movey}px)`
+		}
 		setTimeout(() => {
 			style.opacity = '0'
-		}, time/2);
+		}, time);
 	}, 80);
 	setTimeout(() => {
 		document.body.removeChild(elem)
-	}, time);
+	}, time+fade);
 }
-
+let lastMouseColor = -1
 const drawMouse = evt=>{
-	makeLetter('&nbsp;', evt.clientX, evt.clientY)
+	if(lastMouseColor === -1) lastMouseColor = rndColor()
+	makeLetter('&nbsp;&nbsp;', lastMouseColor, false, evt.clientX, evt.clientY, 100,1000)
 	evt.preventDefault()
 }
 
@@ -108,7 +126,8 @@ document.body.addEventListener('keydown',evt=>{
 	makeLetter(key)
 	evt.preventDefault()
 })
-document.body.addEventListener('wheel', drawMouse)
+
+document.body.addEventListener('wheel', e=>{lastMouseColor = -1; drawMouse(e)})
 document.body.addEventListener('contextmenu',drawMouse)
 document.body.addEventListener('pointerdown',drawMouse)
 document.body.addEventListener('pointermove',drawMouse)
