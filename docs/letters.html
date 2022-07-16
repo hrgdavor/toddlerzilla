@@ -114,9 +114,14 @@ function makeLetter(key, color=-1, move=true, left=-1, top=-1, time = 2000, fade
 		document.body.removeChild(elem)
 	}, time+fade);
 }
-let lastMouseColor = -1
+let lastMouseColor = 1
+let lastMouseDraw = 0
 const drawMouse = evt=>{
-	if(lastMouseColor === -1) lastMouseColor = rndColor()
+	const now = Date.now()
+	if(lastMouseColor === -1 || (now - 500)  > lastMouseDraw){
+		lastMouseColor = rndColor()
+	}
+	lastMouseDraw = now
 	makeLetter('&nbsp;&nbsp;', lastMouseColor, false, evt.clientX, evt.clientY, 100,1000)
 	evt.preventDefault()
 }
