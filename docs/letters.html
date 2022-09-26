@@ -37,7 +37,7 @@ body{
  </head>
 
  <body>
-  
+  <div style="color:#ccc; padding: 10px;">press F11 for fullscreen</div>
  </body>
 </html>
 
@@ -143,7 +143,7 @@ const drawMouse = evt=>{
 document.body.addEventListener('keydown',evt=>{
 	const key = (translations[evt.key] || evt.key).toUpperCase()
 	makeLetter(key)
-	evt.preventDefault()
+	if(key != 'F11') evt.preventDefault()
 })
 
 document.body.addEventListener('wheel', e=>{lastMouseColor = -1; drawMouse(e)})
